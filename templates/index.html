@@ -25,9 +25,15 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
+        label,
+        button {
+            margin-left: 10px;
+        }
+
         textarea {
-            width: 100%;
+            width: calc(100% - 40px);
             height: 100px;
+            margin: 10px 10px 0 10px;
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
@@ -64,6 +70,7 @@
         }
 
         .ai-response {
+            position: relative;
             margin-top: 10px;
             padding: 10px;
             background-color: #e8f4fc;
@@ -71,6 +78,36 @@
             border-radius: 5px;
         }
 
+        audio {
+            position: absolute;
+            right: 10px;
+            top: 14px;
+            height: 40px;
+            width: 100%;
+            max-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #f0f0f0;
+        }
+
+        .response p {
+            margin: 5px 0px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background-color: #f0f0f0;
+            border-radius: 12px;
+        }
+
+        audio::-webkit-media-controls-play-button {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 18px;
+            padding: 10px;
+            transition: background-color 0.3s ease;
+        }
     </style>
 </head>
 
@@ -80,24 +117,40 @@
         <h1>AI Feedback Genie</h1>
         <form method="POST">
             <label for="feedback">Enter your feedback:</label><br>
-            <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br><br>
+            <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br>
             <button type="submit">Submit Feedback</button>
         </form>
 
         {% if sentiment %}
         <div class="response">
-            <h3>Sentiment Analysis Result:</h3>
+            <h3>🔮 Emotional Pulse</h3>
             <p><strong>Feedback:</strong> {{ feedback }}</p>
-            <p><strong>Sentiment:</strong> {{ sentiment['sentiment'] }}</p>
-            <p><strong>Positive Score:</strong> {{ sentiment['positive_score'] }}</p>
-            <p><strong>Neutral Score:</strong> {{ sentiment['neutral_score'] }}</p>
-            <p><strong>Negative Score:</strong> {{ sentiment['negative_score'] }}</p>
+
+            <div class="sentiment-box">
+                {% if sentiment['sentiment'] == 'positive' %}
+                <p class="positive"><strong>Sentiment:</strong> Positive 😊 </p>
+                {% elif sentiment['sentiment'] == 'neutral' %}
+                <p class="neutral"><strong>Sentiment:</strong> Neutral 😐 </p>
+                {% else %}
+                <p class="negative"><strong>Sentiment:</strong> Negative 😢 </p>
+                {% endif %}
+            </div>
+            <p><span>🌟 Positive Score:</span> {{ sentiment['positive_score'] }}</p>
+            <p><span>⚖️ Neutral Score:</span> {{ sentiment['neutral_score'] }}</p>
+            <p><span>🔥 Negative Score:</span> {{ sentiment['negative_score'] }}</p>
+
         </div>
 
         {% if ai_response %}
         <div class="ai-response">
-            <h3>AI Response:</h3>
+            <h3>Genie Speaks:</h3>
             <p>{{ ai_response }}</p>
+            {% if audio_filename %}
+            <audio id="audioPlayer" controls>
+                <source src="{{ url_for('download_audio', filename=audio_filename) }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            {% endif %}
         </div>
         {% endif %}
         {% endif %}
