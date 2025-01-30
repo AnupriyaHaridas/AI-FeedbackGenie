@@ -58,6 +58,18 @@
             position: relative;
         }
 
+        .sentiment {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .ai-response {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border: 1px solid #b3d4fc;
+            border-radius: 5px;
+        }
 
     </style>
 </head>
@@ -65,7 +77,7 @@
 <body>
 
     <div class="container">
-        <h1>Sentiment Feedback App</h1>
+        <h1>AI Feedback Genie</h1>
         <form method="POST">
             <label for="feedback">Enter your feedback:</label><br>
             <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br><br>
@@ -82,6 +94,12 @@
             <p><strong>Negative Score:</strong> {{ sentiment['negative_score'] }}</p>
         </div>
 
+        {% if ai_response %}
+        <div class="ai-response">
+            <h3>AI Response:</h3>
+            <p>{{ ai_response }}</p>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
 
