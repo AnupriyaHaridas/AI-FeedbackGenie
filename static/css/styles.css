@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+}
+
+.head-text {
+    font-size: 17px;
+    text-align: center;
+    font-weight: 500;
+    color: #31272f;
+    margin-top: 10px;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+label,
+button {
+    margin-left: 10px;
+}
+
+textarea {
+    width: calc(100% - 40px);
+    height: 100px;
+    margin: 10px 10px 0 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.response {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    position: relative;
+}
+
+.ai-response.positive {
+    background-color: #d4edda;
+    /* Light green */
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.ai-response.neutral {
+    background-color: #f8f9fa;
+    /* Light grey */
+    border: 1px solid #d6d8db;
+    color: #6c757d;
+}
+
+.ai-response.negative {
+    background-color: #f8d7da;
+    /* Light red */
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.sentiment {
+    font-weight: bold;
+    color: #333;
+}
+
+.ai-response {
+    position: relative;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #e8f4fc;
+    border: 1px solid #b3d4fc;
+    border-radius: 5px;
+}
+
+audio {
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    height: 40px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f0f0f0;
+}
+
+.response p {
+    margin: 5px 0px;
+}
+
+audio::-webkit-media-controls-panel {
+    background-color: #f0f0f0;
+    border-radius: 12px;
+}
+
+audio::-webkit-media-controls-play-button {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    font-size: 18px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}

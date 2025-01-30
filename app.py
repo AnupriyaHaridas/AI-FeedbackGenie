@@ -49,7 +49,6 @@ def analyze_sentiment(text):
     }
 
 
-
 def generate_gpt4_response(feedback, sentiment):
     if sentiment == 'positive':
         prompt = f"The user gave positive feedback: '{feedback}'. Please generate a thankful and enthusiastic response."
@@ -74,7 +73,6 @@ def generate_gpt4_response(feedback, sentiment):
 
     except requests.exceptions.RequestException as e:
         return f"❌ Error: {str(e)}"
-
 
 
 def text_to_speech(text, sentiment):
@@ -121,12 +119,11 @@ def index():
         if sentiment_result:
             # Generate GPT-4 response based on the sentiment
             gpt4_response = generate_gpt4_response(user_input, sentiment_result)
-            
             # Convert the AI response to speech
             audio_filename = text_to_speech(gpt4_response, sentiment_result['sentiment'])
-            print(f"Generated Response: {gpt4_response}")
+            print(f"Generated Response: {gpt4_response}")# success
         else:
-            print("Could not analyze sentiment.")
+            print("Could not analyze sentiment.")# failure
 
         return render_template(
             "index.html",
@@ -135,16 +132,14 @@ def index():
             ai_response=gpt4_response,
             audio_filename=audio_filename
         )
-
     return render_template("index.html", feedback=None, sentiment=None, ai_response=None)
 
 
+# Generates audio file for playback or download.
 @app.route("/download_audio/<filename>")
 def download_audio(filename):
-    """Serves the generated audio file for playback or download."""
     audio_path = os.path.join(AUDIO_FOLDER, filename)
     return send_file(audio_path, as_attachment=True)
-
 
 
 # Run Flask App

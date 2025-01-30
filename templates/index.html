@@ -2,119 +2,18 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentiment Feedback App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        label,
-        button {
-            margin-left: 10px;
-        }
-
-        textarea {
-            width: calc(100% - 40px);
-            height: 100px;
-            margin: 10px 10px 0 10px;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .response {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .sentiment {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .ai-response {
-            position: relative;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e8f4fc;
-            border: 1px solid #b3d4fc;
-            border-radius: 5px;
-        }
-
-        audio {
-            position: absolute;
-            right: 10px;
-            top: 14px;
-            height: 40px;
-            width: 100%;
-            max-width: 300px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            background-color: #f0f0f0;
-        }
-
-        .response p {
-            margin: 5px 0px;
-        }
-
-        audio::-webkit-media-controls-panel {
-            background-color: #f0f0f0;
-            border-radius: 12px;
-        }
-
-        audio::-webkit-media-controls-play-button {
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 50%;
-            border: none;
-            font-size: 18px;
-            padding: 10px;
-            transition: background-color 0.3s ease;
-        }
-    </style>
 </head>
 
 <body>
 
     <div class="container">
         <h1>AI Feedback Genie</h1>
+        <p class="head-text">I analyze your feedback, generate insightful responses, and bring them to life with my
+            voice!</p>
         <form method="POST">
             <label for="feedback">Enter your feedback:</label><br>
             <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br>
@@ -142,7 +41,8 @@
         </div>
 
         {% if ai_response %}
-        <div class="ai-response">
+        <div
+            class="ai-response {{ 'positive' if sentiment['sentiment'] == 'positive' else 'negative' if sentiment['sentiment'] == 'negative' else 'neutral' }}">
             <h3>Genie Speaks:</h3>
             <p>{{ ai_response }}</p>
             {% if audio_filename %}
