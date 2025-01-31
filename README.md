@@ -42,13 +42,17 @@ Ensure the following are installed:
 3. **Set up environment variables**:  
 Create a `.env` file in the project directory with the following keys:
     ```env
-    AZURE_KEY=<your_azure_text_analytics_key>
-    AZURE_ENDPOINT=<your_azure_text_analytics_endpoint>
+    AZURE_TEXT_ANALYTICS_KEY=<your_azure_text_analytics_key>
+    AZURE_TEXT_ANALYTICS_ENDPOINT=<your_azure_text_analytics_endpoint>
     OPENAI_API_KEY=<your_openai_api_key>
-    AZURE_REGION=eastus
+    AZURE_REGION=<your_azure_region>
     AZURE_TTS_KEY=<your_azure_text_to_speech_key>
     AZURE_TTS_ENDPOINT=<your_azure_text_to_speech_endpoint>
-    
+
+    OPENAI_MODEL=<your_openai_model>
+    MODEL_TEMPERATURE=<your_model_temperature>
+    MODEL_MAX_TOKENS=<your_model_max_tokens>
+
     ```
 
 4. **Run the application**:
@@ -68,8 +72,8 @@ Create a `.env` file in the project directory with the following keys:
 │   └── index.html
 ├── /static
 │   └── /audio
-		└── /css
-				└── /styles.css
+	   └── /css
+	       └── /styles.css
 ├── app.py
 ├── requirements.txt
 ├── .env
