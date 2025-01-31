@@ -2,33 +2,36 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">   <!-- Link to the external CSS file for styling -->
+    <!-- Link to the external CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" 
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%96%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%96%3C/text%3E%3C/svg%3E">
     <title>AI feedback Genie</title>
 </head>
 
 <body>
-
     <div class="container">
         <!-- Main header for the app -->
         <h1>AI Feedback Genie</h1>
         <p class="head-text">I analyze your feedback, generate insightful responses, and bring them to life with my
             voice!</p>
 
-        <!-- Feedback form -->    
+        <!-- Feedback form -->
         <form method="POST">
             <label for="feedback">Enter your feedback:
                 <a href="{{ url_for('index') }}" id="refreshButton" class="refresh-btn" style="float: right;">
-                    &#x1F504; Refresh</a>   <!-- Refresh button to clear or reset the form -->
+                    &#x1F504; Refresh</a> <!-- Refresh button to clear or reset the form -->
             </label><br>
             <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br>
-            <button type="submit">Submit Feedback</button>
+            <button type="submit">
+                <span id="btnText">Submit Feedback</span>
+                <span id="loadingSpinner" class="spinner" style="display: none;"></span>
+            </button>
         </form>
 
-         <!-- Display sentiment analysis results if feedback has been processed -->
+        <!-- Display sentiment analysis results if feedback has been processed -->
         {% if sentiment %}
         <div class="response">
             <h3> &#x1F52E; Emotional Pulse</h3>
@@ -66,6 +69,21 @@
         {% endif %}
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("form").addEventListener("submit", function () {
+                let submitBtn = document.querySelector("button[type='submit']");
+                let btnText = document.getElementById("btnText");
+                let spinner = document.getElementById("loadingSpinner");
+
+                // Disable button and show loading spinner
+                submitBtn.disabled = true;
+                btnText.style.display = "none";
+                spinner.style.display = "inline-block";
+            });
+        });
+    </script>
 
 </body>
 

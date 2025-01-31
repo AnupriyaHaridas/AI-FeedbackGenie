@@ -134,16 +134,46 @@ audio::-webkit-media-controls-play-button {
 
 .refresh-btn {
     display: inline-block;
-    background-color: #4CAF50; 
-    color: white; 
+    background-color: #4CAF50;
+    color: white;
     font-size: 14px;
     padding: 6px 14px 8px 8px;
     margin-right: 10px;
     text-align: center;
-    text-decoration: none; 
+    text-decoration: none;
     border-radius: 5px;
-    border: 1px solid #4CAF50; 
+    border: 1px solid #4CAF50;
     cursor: pointer;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
+@media (max-width: 640px) {
+    audio {
+        /* Replace with the actual class name */
+        position: static;
+        /* Removes absolute positioning */
+        max-width: none;
+        /* Removes max-width constraint */
+    }
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s infinite linear;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
