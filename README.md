@@ -98,5 +98,7 @@ Ensure the following are installed:
 ├── .env
 └── README.md
 
+```
+
 ## Live Demo 🌐  
 Check out the hosted application here: [AI Feedback Genie 🚀](https://ai-feedbackgenie.onrender.com)
