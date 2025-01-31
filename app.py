@@ -1,27 +1,30 @@
 import os
 import openai
 import requests
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, render_template, send_file, redirect, url_for
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 import azure.cognitiveservices.speech as speechsdk
 from dotenv import load_dotenv
 
+# Initialize the Flask app
 app = Flask(__name__)
 
+# Load environment variables from the .env file
 load_dotenv()
 
-# Get API keys from environment variables
-AZURE_KEY = os.getenv('AZURE_KEY')
-AZURE_ENDPOINT = os.getenv('AZURE_ENDPOINT')
+# Retrieve API keys and endpoints from environment variables
+AZURE_TEXT_ANALYTICS_KEY = os.getenv('AZURE_TEXT_ANALYTICS_KEY')
+AZURE_TEXT_ANALYTICS_ENDPOINT = os.getenv('AZURE_TEXT_ANALYTICS_ENDPOINT')
 
-AZURE_SPEECH_KEY = os.getenv("AZURE_SPEECH_KEY")
+AZURE_TTS_KEY = os.getenv("AZURE_TTS_KEY")
 AZURE_REGION = os.getenv("AZURE_REGION")
-SPEECH_ENDPOINT = os.getenv("SPEECH_ENDPOINT")
+AZURE_TTS_ENDPOINT = os.getenv("AZURE_TTS_ENDPOINT")
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = OPENAI_API_KEY
 
+# Headers for OpenAI API requests
 headers = {
     "Authorization": f"Bearer {OPENAI_API_KEY}",
     "Content-Type": "application/json"
@@ -31,11 +34,11 @@ headers = {
 AUDIO_FOLDER = "static/audio"
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 
-
+# Function to authenticate the client for Azure Text Analytics API
 def authenticate_client():
-    return TextAnalyticsClient(endpoint=AZURE_ENDPOINT, credential=AzureKeyCredential(AZURE_KEY))
+    return TextAnalyticsClient(endpoint=AZURE_TEXT_ANALYTICS_ENDPOINT, credential=AzureKeyCredential(AZURE_TEXT_ANALYTICS_KEY))
 
-
+# Function to analyze sentiment of text using Azure's Text Analytics API
 def analyze_sentiment(text):
     client = authenticate_client()
     documents = [text]
@@ -48,8 +51,9 @@ def analyze_sentiment(text):
         "negative_score": response.confidence_scores.negative
     }
 
-
+# Function to generate a response using OpenAI GPT-4 based on feedback sentiment
 def generate_gpt4_response(feedback, sentiment):
+    
     if sentiment == 'positive':
         prompt = f"The user gave positive feedback: '{feedback}'. Please generate a thankful and enthusiastic response."
     elif sentiment == 'negative':
@@ -57,30 +61,32 @@ def generate_gpt4_response(feedback, sentiment):
     else:
         prompt = f"The user gave neutral feedback: '{feedback}'. Please generate a neutral and informative response."
 
+    # Load model parameters from .env file; use default values if not set to prevent errors
     data = {
-        "model": "gpt-4",  # Use GPT-4 model for sentiment analysis
+        "model": os.getenv("OPENAI_MODEL", "gpt-4"),
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens":150,
-        "temperature":0.7
+        "max_tokens":int(os.getenv("MODEL_MAX_TOKENS", 150)),
+        "temperature":float(os.getenv("MODEL_TEMPERATURE", 0.7))
     }
+    
     try:
+        # Make the request to OpenAI API
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data, verify=False)
         response.raise_for_status()  # Raise an error for bad responses
         ai_response = response.json()
-        ai_sentiment = ai_response['choices'][0]['message']['content']  # Extract the sentiment
-
+        ai_sentiment = ai_response['choices'][0]['message']['content']
         return ai_sentiment
 
     except requests.exceptions.RequestException as e:
         return f"❌ Error: {str(e)}"
 
 
+# Function to convert text to speech using Azure TTS (Text-to-Speech) service
 def text_to_speech(text, sentiment):
-    # Set up the speech configuration
-    speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_REGION)
-    speech_config.speech_synthesis_voice_name = "en-US-AriaNeural"  # Default voice for neutral tone
     
-    # Adjust voice based on sentiment
+    speech_config = speechsdk.SpeechConfig(subscription=AZURE_TTS_KEY, region=AZURE_REGION) # Set up the speech configuration
+    speech_config.speech_synthesis_voice_name = "en-US-AriaNeural" 
+    
     if sentiment == "positive":
         speech_config.speech_synthesis_voice_name = "en-US-AriaNeural"  # Cheerful, upbeat voice
     elif sentiment == "negative":
@@ -93,15 +99,12 @@ def text_to_speech(text, sentiment):
     audio_path = os.path.join(AUDIO_FOLDER, audio_filename)
 
     # Set up audio configuration (output to a file)
-    audio_output = speechsdk.audio.AudioOutputConfig(filename=audio_path)
-
-    # Create a synthesizer and synthesize speech
-    synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_output)
+    audio_output = speechsdk.audio.AudioOutputConfig(filename=audio_path)   
+    synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_output) 
     synthesizer.speak_text_async(text).get()
 
-    return audio_filename  # Return the filename for frontend use
-
-    
+    return audio_filename
+  
 
 # Flask Routes
 @app.route("/", methods=["GET", "POST"])
@@ -112,18 +115,14 @@ def index():
 
     if request.method == "POST":
         user_input = request.form["feedback"]
-        
-        # Sentiment Analysis
-        sentiment_result = analyze_sentiment(user_input)
+        sentiment_result = analyze_sentiment(user_input)    # Sentiment Analysis
         
         if sentiment_result:
-            # Generate GPT-4 response based on the sentiment
-            gpt4_response = generate_gpt4_response(user_input, sentiment_result)
-            # Convert the AI response to speech
-            audio_filename = text_to_speech(gpt4_response, sentiment_result['sentiment'])
-            print(f"Generated Response: {gpt4_response}")# success
+            gpt4_response = generate_gpt4_response(user_input, sentiment_result)    # Generate GPT-4 response based on the sentiment
+            audio_filename = text_to_speech(gpt4_response, sentiment_result['sentiment'])   # Convert the AI response to speech
+            print(f"Generated Response: {gpt4_response}")   # success
         else:
-            print("Could not analyze sentiment.")# failure
+            print("Could not analyze sentiment.")   # failure
 
         return render_template(
             "index.html",

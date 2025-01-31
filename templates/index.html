@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">   <!-- Link to the external CSS file for styling -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentiment Feedback App</title>
@@ -11,41 +11,50 @@
 <body>
 
     <div class="container">
+        <!-- Main header for the app -->
         <h1>AI Feedback Genie</h1>
         <p class="head-text">I analyze your feedback, generate insightful responses, and bring them to life with my
             voice!</p>
+
+        <!-- Feedback form -->    
         <form method="POST">
-            <label for="feedback">Enter your feedback:</label><br>
+            <label for="feedback">Enter your feedback:
+                <a href="{{ url_for('index') }}" id="refreshButton" class="refresh-btn" style="float: right;">
+                    &#x1F504; Refresh</a>   <!-- Refresh button to clear or reset the form -->
+            </label><br>
             <textarea name="feedback" id="feedback" placeholder="Your feedback here..." required></textarea><br>
             <button type="submit">Submit Feedback</button>
         </form>
 
+         <!-- Display sentiment analysis results if feedback has been processed -->
         {% if sentiment %}
         <div class="response">
-            <h3>🔮 Emotional Pulse</h3>
+            <h3> &#x1F52E; Emotional Pulse</h3>
             <p><strong>Feedback:</strong> {{ feedback }}</p>
 
             <div class="sentiment-box">
                 {% if sentiment['sentiment'] == 'positive' %}
-                <p class="positive"><strong>Sentiment:</strong> Positive 😊 </p>
+                <p class="positive"><strong>Sentiment:</strong> Positive &#x1F60A; </p>
                 {% elif sentiment['sentiment'] == 'neutral' %}
-                <p class="neutral"><strong>Sentiment:</strong> Neutral 😐 </p>
+                <p class="neutral"><strong>Sentiment:</strong> Neutral &#x1F610; </p>
                 {% else %}
-                <p class="negative"><strong>Sentiment:</strong> Negative 😢 </p>
+                <p class="negative"><strong>Sentiment:</strong> Negative &#x1F622; </p>
                 {% endif %}
             </div>
-            <p><span>🌟 Positive Score:</span> {{ sentiment['positive_score'] }}</p>
-            <p><span>⚖️ Neutral Score:</span> {{ sentiment['neutral_score'] }}</p>
-            <p><span>🔥 Negative Score:</span> {{ sentiment['negative_score'] }}</p>
-
+            <!-- Display sentiment scores -->
+            <p><span> &#11088; Positive Score:</span> {{ sentiment['positive_score'] }}</p>
+            <p><span> &nbsp;&#9878;&nbsp;Neutral Score:</span> {{ sentiment['neutral_score'] }}</p>
+            <p><span> &#128293; Negative Score:</span> {{ sentiment['negative_score'] }}</p>
         </div>
 
+        <!-- Display AI response based on sentiment -->
         {% if ai_response %}
         <div
             class="ai-response {{ 'positive' if sentiment['sentiment'] == 'positive' else 'negative' if sentiment['sentiment'] == 'negative' else 'neutral' }}">
             <h3>Genie Speaks:</h3>
             <p>{{ ai_response }}</p>
             {% if audio_filename %}
+            <!-- Audio player to play the AI's spoken response -->
             <audio id="audioPlayer" controls>
                 <source src="{{ url_for('download_audio', filename=audio_filename) }}" type="audio/mpeg">
                 Your browser does not support the audio element.

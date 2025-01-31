@@ -131,3 +131,19 @@ audio::-webkit-media-controls-play-button {
     padding: 10px;
     transition: background-color 0.3s ease;
 }
+
+.refresh-btn {
+    display: inline-block;
+    background-color: #4CAF50; 
+    color: white; 
+    font-size: 14px;
+    padding: 6px 14px 8px 8px;
+    margin-right: 10px;
+    text-align: center;
+    text-decoration: none; 
+    border-radius: 5px;
+    border: 1px solid #4CAF50; 
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
