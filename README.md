@@ -22,7 +22,7 @@ This web application allows users to submit feedback, which is then analyzed for
 
 Ensure the following are installed:
 - **Python 3.x**
-- **Flask** (or **Django**)
+- **Flask** 
 - **Azure Cognitive Services** subscription for Text Analytics and Text-to-Speech APIs
 - **OpenAI API key** (for GPT-3 or GPT-4)
 
@@ -42,6 +42,7 @@ Ensure the following are installed:
     ```
 
 3. **Activate virtual environment**:
+    
     On Windows: 
 
     ```bash
