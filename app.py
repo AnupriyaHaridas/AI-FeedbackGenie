@@ -1,6 +1,6 @@
 import os
 import openai
-import requests
+import requests, time
 from flask import Flask, request, render_template, send_file, redirect, url_for
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
@@ -42,18 +42,20 @@ def authenticate_client():
 def analyze_sentiment(text):
     client = authenticate_client()
     documents = [text]
-    response = client.analyze_sentiment(documents=documents)[0]
-
-    return {
-        "sentiment": response.sentiment,
-        "positive_score": response.confidence_scores.positive,
-        "neutral_score": response.confidence_scores.neutral,
-        "negative_score": response.confidence_scores.negative
-    }
+    try:
+        response = client.analyze_sentiment(documents=documents)[0]
+        return {
+            "sentiment": response.sentiment,
+            "positive_score": response.confidence_scores.positive,
+            "neutral_score": response.confidence_scores.neutral,
+            "negative_score": response.confidence_scores.negative
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 # Function to generate a response using OpenAI GPT-4 based on feedback sentiment
 def generate_gpt4_response(feedback, sentiment):
-    
+
     if sentiment == 'positive':
         prompt = f"The user gave positive feedback: '{feedback}'. Please generate a thankful and enthusiastic response."
     elif sentiment == 'negative':
@@ -68,17 +70,13 @@ def generate_gpt4_response(feedback, sentiment):
         "max_tokens":int(os.getenv("MODEL_MAX_TOKENS", 150)),
         "temperature":float(os.getenv("MODEL_TEMPERATURE", 0.7))
     }
-    
     try:
-        # Make the request to OpenAI API
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data, verify=False)
-        response.raise_for_status()  # Raise an error for bad responses
+        response.raise_for_status()
         ai_response = response.json()
-        ai_sentiment = ai_response['choices'][0]['message']['content']
-        return ai_sentiment
-
+        return ai_response['choices'][0]['message']['content']
     except requests.exceptions.RequestException as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ OpenAI API error: {str(e)}"
 
 
 # Function to convert text to speech using Azure TTS (Text-to-Speech) service
@@ -95,7 +93,7 @@ def text_to_speech(text, sentiment):
         speech_config.speech_synthesis_voice_name = "en-US-GuyNeural"  # Neutral tone
 
     # Generate a unique filename for the audio
-    audio_filename = f"response_{sentiment}.mp3"
+    audio_filename = f"response_{sentiment}_{int(time.time())}.mp3"
     audio_path = os.path.join(AUDIO_FOLDER, audio_filename)
 
     # Set up audio configuration (output to a file)
@@ -118,7 +116,7 @@ def index():
         sentiment_result = analyze_sentiment(user_input)    # Sentiment Analysis
         
         if sentiment_result:
-            gpt4_response = generate_gpt4_response(user_input, sentiment_result)    # Generate GPT-4 response based on the sentiment
+            gpt4_response = generate_gpt4_response(user_input, sentiment_result['sentiment'])    # Generate GPT-4 response based on the sentiment
             audio_filename = text_to_speech(gpt4_response, sentiment_result['sentiment'])   # Convert the AI response to speech
             print(f"Generated Response: {gpt4_response}")   # success
         else:

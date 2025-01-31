@@ -30,32 +30,50 @@ Ensure the following are installed:
 
 1. **Clone the repository**:
     ```bash
-    git clone origin https://github.com/AnupriyaHaridas/AI-FeedbackGenie.git
+    git clone https://github.com/AnupriyaHaridas/AI-FeedbackGenie.git
     cd AI-FeedbackGenie
     ```
 
-2. **Install required dependencies**:
+2. **Create virtual environment**:
+    First, make sure you have Python installed. You can create a virtual environment for the project using the command:
+
+    ```bash
+    python -m venv venv
+    ```
+
+3. **Activate virtual environment**:
+    On Windows: 
+
+    ```bash
+    .\venv\Scripts\activate
+    ```
+
+    On On macOS/Linux: 
+    ```bash
+    source venv/bin/activate
+    ```
+
+4. **Install required dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. **Set up environment variables**:  
-Create a `.env` file in the project directory with the following keys:
+5. **Set up environment variables**:  
+    Create a `.env` file in the project directory with the following keys:
     ```env
-    AZURE_TEXT_ANALYTICS_KEY=<your_azure_text_analytics_key>
-    AZURE_TEXT_ANALYTICS_ENDPOINT=<your_azure_text_analytics_endpoint>
-    OPENAI_API_KEY=<your_openai_api_key>
-    AZURE_REGION=<your_azure_region>
-    AZURE_TTS_KEY=<your_azure_text_to_speech_key>
-    AZURE_TTS_ENDPOINT=<your_azure_text_to_speech_endpoint>
-
-    OPENAI_MODEL=<your_openai_model>
-    MODEL_TEMPERATURE=<your_model_temperature>
-    MODEL_MAX_TOKENS=<your_model_max_tokens>
+    AZURE_TEXT_ANALYTICS_KEY=your_azure_text_analytics_key  # Replace with your key
+    AZURE_TEXT_ANALYTICS_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
+    OPENAI_API_KEY=your_openai_api_key
+    AZURE_REGION=your_azure_region
+    AZURE_TTS_KEY=your_azure_text_to_speech_key
+    AZURE_TTS_ENDPOINT=https://your-region.tts.speech.microsoft.com/cognitiveservices/v1
+    OPENAI_MODEL=gpt-4  # Default model
+    MODEL_TEMPERATURE=0.7  # Adjust for randomness
+    MODEL_MAX_TOKENS=150  # Adjust for response length
 
     ```
 
-4. **Run the application**:
+6. **Run the application**:
     ```bash
     python app.py
     ```
