@@ -86,7 +86,7 @@ Ensure the following are installed:
 
 ```bash
 /project
-│		/venv
+│	/venv
 ├── /templates
 │   └── index.html
 ├── /static
